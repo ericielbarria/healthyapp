@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(HealthyApp());
+  runApp(const HealthyApp());
 }
 
 class HealthyApp extends StatelessWidget {
+  const HealthyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -14,19 +16,22 @@ class HealthyApp extends StatelessWidget {
   }
 }
 
-// ---------------- HOME ----------------
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("HealthyHabits")),
+      appBar: AppBar(
+        title: const Text("HealthyHabits"),
+      ),
       body: Center(
         child: ElevatedButton(
-          child: Text("Evaluar mis hábitos"),
+          child: const Text("Evaluar hábitos"),
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => FormPage()),
+              MaterialPageRoute(
+                builder: (context) => FormPage(),
+              ),
             );
           },
         ),
@@ -35,32 +40,37 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// ---------------- FORM ----------------
 class FormPage extends StatefulWidget {
   @override
-  _FormPageState createState() => _FormPageState();
+  State<FormPage> createState() => _FormPageState();
 }
 
 class _FormPageState extends State<FormPage> {
-  int ejercicio = 0;
+  double ejercicio = 0;
   String chatarra = "A veces";
   bool sueno = false;
 
-  void calcular() {
+  void calcularResultado() {
     int score = 0;
 
     if (ejercicio >= 3) score += 2;
-    else if (ejercicio >= 1) score += 1;
-
     if (chatarra == "Nunca") score += 2;
-    else if (chatarra == "A veces") score += 1;
-
     if (sueno) score += 2;
+
+    String resultado;
+
+    if (score >= 5) {
+      resultado = "Buenos hábitos 🟢";
+    } else if (score >= 3) {
+      resultado = "Hábitos regulares 🟡";
+    } else {
+      resultado = "Necesitas mejorar 🔴";
+    }
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ResultPage(score: score),
+        builder: (context) => ResultPage(resultado),
       ),
     );
   }
@@ -68,32 +78,38 @@ class _FormPageState extends State<FormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Formulario")),
+      appBar: AppBar(
+        title: const Text("Formulario"),
+      ),
       body: Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            Text("¿Ejercicio por semana?"),
+
+            const Text("¿Cuántos días haces ejercicio?"),
+
             Slider(
-              value: ejercicio.toDouble(),
+              value: ejercicio,
               min: 0,
               max: 7,
               divisions: 7,
-              label: "$ejercicio",
+              label: ejercicio.toString(),
               onChanged: (value) {
                 setState(() {
-                  ejercicio = value.toInt();
+                  ejercicio = value;
                 });
               },
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-            Text("¿Comes comida chatarra?"),
             DropdownButton<String>(
               value: chatarra,
               items: ["Nunca", "A veces", "Frecuente"]
-                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                  .map((e) => DropdownMenuItem(
+                        value: e,
+                        child: Text(e),
+                      ))
                   .toList(),
               onChanged: (value) {
                 setState(() {
@@ -102,29 +118,31 @@ class _FormPageState extends State<FormPage> {
               },
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("¿Duermes ≥7h?"),
+
+                const Text("¿Duermes más de 7h?"),
+
                 Switch(
                   value: sueno,
-                  onChanged: (value) {
+                  onChanged: (bool value) {
                     setState(() {
                       sueno = value;
                     });
-                  },cd
-                )
+                  },
+                ),
               ],
             ),
 
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
 
             ElevatedButton(
-              onPressed: calcular,
-              child: Text("Ver resultado"),
-            )
+              onPressed: calcularResultado,
+              child: const Text("Ver resultado"),
+            ),
           ],
         ),
       ),
@@ -132,26 +150,22 @@ class _FormPageState extends State<FormPage> {
   }
 }
 
-// ---------------- RESULT ----------------
 class ResultPage extends StatelessWidget {
-  final int score;
 
-  ResultPage({required this.score});
+  final String resultado;
 
-  String getResultado() {
-    if (score >= 5) return "Buenos hábitos 🟢";
-    if (score >= 3) return "Hábitos regulares 🟡";
-    return "Necesitas mejorar 🔴";
-  }
+  const ResultPage(this.resultado, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Resultado")),
+      appBar: AppBar(
+        title: const Text("Resultado"),
+      ),
       body: Center(
         child: Text(
-          getResultado(),
-          style: TextStyle(fontSize: 24),
+          resultado,
+          style: const TextStyle(fontSize: 24),
         ),
       ),
     );
